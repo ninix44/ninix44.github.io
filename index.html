@@ -271,12 +271,102 @@
             opacity: 0.7;
         }
 
+        .playground-section {
+            grid-column: span 12;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            height: 800px;
+        }
+
+        .editor-wrapper {
+            display: flex;
+            gap: 20px;
+            height: 100%;
+        }
+
+        .shader-canvas-box {
+            flex: 1;
+            background: #000;
+            border-radius: 15px;
+            overflow: hidden;
+            border: 1px solid var(--card-border);
+            box-shadow: 0 0 20px rgba(0,0,0,0.5);
+            position: relative;
+        }
+
+        .shader-canvas-box canvas {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+
+        .code-editor-box {
+            flex: 1;
+            background: #1e1e1e;
+            border-radius: 15px;
+            overflow: hidden;
+            border: 1px solid var(--card-border);
+            position: relative;
+            display: flex;
+            flex-direction: column;
+        }
+
+        #monaco-editor {
+            width: 100%;
+            flex-grow: 1;
+        }
+
+        .play-bar {
+            padding: 10px 20px;
+            background: rgba(20, 10, 30, 0.9);
+            border-bottom: 1px solid var(--card-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .run-btn {
+            background: var(--st-active);
+            color: #000;
+            border: none;
+            padding: 5px 15px;
+            font-family: var(--font-code);
+            font-weight: bold;
+            cursor: pointer;
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            transition: 0.2s;
+        }
+        .run-btn:hover { background: #fff; transform: scale(1.05); }
+
+        .error-log {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: rgba(255, 0, 0, 0.9);
+            color: white;
+            font-family: var(--font-code);
+            font-size: 0.8rem;
+            padding: 10px;
+            display: none;
+            z-index: 10;
+            white-space: pre-wrap;
+        }
+
         @media (max-width: 900px) {
             .container { grid-template-columns: 1fr; }
             .hero-section, .dashboard-widget, .about-box, .stats-box, .skills-box, .project-card, .section-header, .footer-license, .capability-card { grid-column: span 1; }
             .hero-section h1 { font-size: 2.8rem; }
             .widget-header { flex-direction: row-reverse; align-items: center; }
             .nav-links { display: none; }
+
+            .playground-section { height: auto; }
+            .editor-wrapper { flex-direction: column; height: auto; }
+            .shader-canvas-box, .code-editor-box { height: 400px; }
 
             .tag-private {
                 position: static;
@@ -307,6 +397,7 @@
     <div class="nav-links">
         <button class="nav-btn" onclick="scrollToId('projects')">./projects</button>
         <button class="nav-btn" onclick="scrollToId('skills')">./skills</button>
+        <button class="nav-btn" onclick="scrollToId('playground')">./playground</button>
         <button class="nav-btn" onclick="scrollToId('about')">./contact</button>
     </div>
 </header>
@@ -599,12 +690,38 @@
         <a href="https://github.com/ninix44/Export3D" target="_blank" class="p-link">VIEW REPO <i class="fas fa-arrow-right"></i></a>
     </div>
 
+    <div class="section-header" id="playground">// SHADER_PLAYGROUND (GLSL)</div>
+
+    <div class="box playground-section">
+        <div class="editor-wrapper">
+            <div class="shader-canvas-box">
+                <canvas id="glCanvas"></canvas>
+                <div id="errorLog" class="error-log"></div>
+                <div style="position:absolute; top:10px; left:10px; font-family:var(--font-code); font-size:0.7rem; color:rgba(255,255,255,0.5); pointer-events:none;">
+                    uniforms: iTime (float), iResolution (vec2)
+                </div>
+            </div>
+
+            <div class="code-editor-box">
+                <div class="play-bar">
+                    <span style="font-family:var(--font-code); color:var(--text-muted); font-size:0.9rem;">mainImage.glsl</span>
+                    <button class="run-btn" onclick="compileShader()">
+                        <i class="fas fa-play"></i> RUN / UPDATE (Ctrl+S)
+                    </button>
+                </div>
+                <div id="monaco-editor"></div>
+            </div>
+        </div>
+    </div>
+
     <div class="footer-license">
         <div class="license-copy" data-translate="license_copy">© 2025 @Ninix44. All rights reserved.</div>
         <div class="license-warn" data-translate="license_warn">Copying, stealing or distributing content from this site without permission is strictly prohibited.</div>
     </div>
 
 </div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.38.0/min/vs/loader.min.js"></script>
 
 <script>
     let currentLang = 'en';
@@ -853,6 +970,172 @@
     function scrollToId(id) {
         const el = document.getElementById(id);
         if(el) el.scrollIntoView({ behavior: 'smooth' });
+    }
+
+    const canvas = document.getElementById("glCanvas");
+    const gl = canvas.getContext("webgl");
+    const errorLog = document.getElementById("errorLog");
+    let program = null;
+    let animationFrameId;
+
+    const vsSource = `
+        attribute vec2 position;
+        void main() { gl_Position = vec4(position, 0.0, 1.0); }
+    `;
+
+    const fsPrefix = `
+        precision mediump float;
+        uniform vec2 iResolution;
+        uniform float iTime;
+    `;
+    const fsSuffix = `
+        void main() {
+            mainImage(gl_FragColor, gl_FragCoord.xy);
+        }
+    `;
+
+    const defaultCode = `void mainImage( out vec4 fragColor, in vec2 fragCoord )
+{
+    // Normalized pixel coordinates (from 0 to 1)
+    vec2 uv = fragCoord/iResolution.xy;
+
+    // Time varying pixel color
+    vec3 col = 0.5 + 0.5*cos(iTime+uv.xyx+vec3(0,2,4));
+
+    // Output to screen
+    fragColor = vec4(col,1.0);
+}`;
+
+    function initGL() {
+        if (!gl) return;
+        const buffer = gl.createBuffer();
+        gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([
+            -1, -1,  1, -1, -1,  1,
+            -1,  1,  1, -1,  1,  1
+        ]), gl.STATIC_DRAW);
+    }
+
+    function createShader(gl, type, source) {
+        const shader = gl.createShader(type);
+        gl.shaderSource(shader, source);
+        gl.compileShader(shader);
+        if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+            const info = gl.getShaderInfoLog(shader);
+            errorLog.innerText = "ERROR: " + info.replace(/ERROR: 0:(\d+):/g, (match, line) => `Line ${line - 4}: `);
+            errorLog.style.display = "block";
+            gl.deleteShader(shader);
+            return null;
+        }
+        return shader;
+    }
+
+    let editorInstance;
+    require.config({ paths: { 'vs': 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.38.0/min/vs' }});
+
+    require(['vs/editor/editor.main'], function () {
+
+        monaco.languages.registerCompletionItemProvider('c', {
+            provideCompletionItems: function (model, position) {
+                const suggestions = [
+                    { label: 'vec3', kind: monaco.languages.CompletionItemKind.Class, insertText: 'vec3(${1:x}, ${2:y}, ${3:z})', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet, documentation: '3D Vector' },
+                    { label: 'vec2', kind: monaco.languages.CompletionItemKind.Class, insertText: 'vec2(${1:x}, ${2:y})', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet },
+                    { label: 'vec4', kind: monaco.languages.CompletionItemKind.Class, insertText: 'vec4(${1:x}, ${2:y}, ${3:z}, ${4:w})', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet },
+                    { label: 'mix', kind: monaco.languages.CompletionItemKind.Function, insertText: 'mix(${1:x}, ${2:y}, ${3:a})', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet, documentation: 'Linear interpolation' },
+                    { label: 'smoothstep', kind: monaco.languages.CompletionItemKind.Function, insertText: 'smoothstep(${1:edge0}, ${2:edge1}, ${3:x})', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet },
+                    { label: 'sin', kind: monaco.languages.CompletionItemKind.Function, insertText: 'sin(${1:x})', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet },
+                    { label: 'cos', kind: monaco.languages.CompletionItemKind.Function, insertText: 'cos(${1:x})', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet },
+                    { label: 'normalize', kind: monaco.languages.CompletionItemKind.Function, insertText: 'normalize(${1:v})', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet },
+                    { label: 'length', kind: monaco.languages.CompletionItemKind.Function, insertText: 'length(${1:v})', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet },
+                    { label: 'texture', kind: monaco.languages.CompletionItemKind.Function, insertText: 'texture(${1:sampler}, ${2:coord})', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet },
+                    { label: 'pow', kind: monaco.languages.CompletionItemKind.Function, insertText: 'pow(${1:x}, ${2:y})', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet },
+                    { label: 'step', kind: monaco.languages.CompletionItemKind.Function, insertText: 'step(${1:edge}, ${2:x})', insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet },
+                    { label: 'iTime', kind: monaco.languages.CompletionItemKind.Constant, insertText: 'iTime', documentation: 'Shader playback time in seconds' },
+                    { label: 'iResolution', kind: monaco.languages.CompletionItemKind.Constant, insertText: 'iResolution', documentation: 'Viewport resolution (pixels)' },
+                    { label: 'fragColor', kind: monaco.languages.CompletionItemKind.Variable, insertText: 'fragColor' },
+                    { label: 'fragCoord', kind: monaco.languages.CompletionItemKind.Variable, insertText: 'fragCoord' }
+                ];
+                return { suggestions: suggestions };
+            }
+        });
+
+        editorInstance = monaco.editor.create(document.getElementById('monaco-editor'), {
+            value: defaultCode,
+            language: 'c',
+            theme: 'vs-dark',
+            automaticLayout: true,
+            fontSize: 14,
+            fontFamily: "'JetBrains Mono', monospace",
+            minimap: { enabled: false },
+            padding: { top: 15 }
+        });
+
+        initGL();
+        compileShader();
+
+        editorInstance.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyS, function() {
+            compileShader();
+        });
+    });
+
+    window.compileShader = function() {
+        if (!editorInstance) return;
+
+        const userCode = editorInstance.getValue();
+        const fullFsSource = fsPrefix + userCode + fsSuffix;
+
+        errorLog.style.display = "none";
+
+        const vs = createShader(gl, gl.VERTEX_SHADER, vsSource);
+        const fs = createShader(gl, gl.FRAGMENT_SHADER, fullFsSource);
+
+        if (!vs || !fs) return;
+
+        const newProgram = gl.createProgram();
+        gl.attachShader(newProgram, vs);
+        gl.attachShader(newProgram, fs);
+        gl.linkProgram(newProgram);
+
+        if (!gl.getProgramParameter(newProgram, gl.LINK_STATUS)) {
+            errorLog.innerText = "Link Error: " + gl.getProgramInfoLog(newProgram);
+            errorLog.style.display = "block";
+            return;
+        }
+
+        if (program) gl.deleteProgram(program);
+        program = newProgram;
+
+        if (!animationFrameId) requestAnimationFrame(render);
+    }
+
+    function render(time) {
+        time *= 0.001;
+
+        const displayWidth  = canvas.clientWidth;
+        const displayHeight = canvas.clientHeight;
+        if (canvas.width !== displayWidth || canvas.height !== displayHeight) {
+            canvas.width  = displayWidth;
+            canvas.height = displayHeight;
+            gl.viewport(0, 0, canvas.width, canvas.height);
+        }
+
+        if (program) {
+            gl.useProgram(program);
+
+            const positionLocation = gl.getAttribLocation(program, "position");
+            gl.enableVertexAttribArray(positionLocation);
+            gl.vertexAttribPointer(positionLocation, 2, gl.FLOAT, false, 0, 0);
+
+            const resolutionLocation = gl.getUniformLocation(program, "iResolution");
+            const timeLocation = gl.getUniformLocation(program, "iTime");
+
+            gl.uniform2f(resolutionLocation, canvas.width, canvas.height);
+            gl.uniform1f(timeLocation, time);
+
+            gl.drawArrays(gl.TRIANGLES, 0, 6);
+        }
+
+        animationFrameId = requestAnimationFrame(render);
     }
 
     setInterval(updateTime, 1000);
