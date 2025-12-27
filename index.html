@@ -358,9 +358,17 @@
         @media (max-width: 900px) {
             header {
                 width: 95%;
-                padding: 10px 20px;
+                padding: 15px;
+                flex-direction: column;
+                gap: 15px;
+                border-radius: 30px;
             }
-            .nav-links { display: none; }
+            .nav-links {
+            display: flex;
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 8px;
+            }
 
             .container {
                 display: flex;
