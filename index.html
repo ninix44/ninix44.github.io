@@ -181,6 +181,8 @@
         .tag-cpp { border-color: #659ad2 !important; color: #659ad2 !important; background: rgba(101, 154, 210, 0.1) !important; }
         .tag-java { border-color: #b07219 !important; color: #b07219 !important; background: rgba(176, 114, 25, 0.1) !important; }
         .tag-rust { border-color: #dea584 !important; color: #dea584 !important; background: rgba(222, 165, 132, 0.1) !important; }
+        .tag-vr { border-color: #10b981 !important; color: #10b981 !important; background: rgba(16, 185, 129, 0.1) !important; }
+        .tag-csharp { border-color: #14b8a6 !important; color: #14b8a6 !important; background: rgba(20, 184, 166, 0.1) !important; }
 
         .tag-graphics { border-color: #a855f7 !important; color: #a855f7 !important; background: rgba(168, 85, 247, 0.05) !important; }
         .tag-lib { border-color: #8b5cf6 !important; color: #8b5cf6 !important; background: rgba(139, 92, 246, 0.05) !important; }
@@ -500,7 +502,7 @@
             <span class="gradient-text">ENGINEER</span>
         </h1>
         <p class="hero-p" id="hero-desc" data-translate="hero_desc">
-            <br>Stack: Rust, C++, Java, Kotlin, Python, ASM.
+            <br>Stack: Rust, C++, Java, Kotlin, Python, VR.
         </p>
         <div style="display: flex; gap: 20px;">
             <button class="btn btn-primary" onclick="scrollToId('projects')" data-translate="btn_explore">
@@ -546,9 +548,9 @@
             <img src="https://github.com/ninix44.png" alt="Avatar" class="avatar-glow">
             <div>
                 <h2 style="font-size: 1.8rem; margin-bottom: 5px; color: #fff;">Ninix44</h2>
-                <span style="color:var(--secondary); font-family:var(--font-code); font-size:0.9rem;" data-translate="role_tag">Low-Level & Backend Specialist</span>
+                <span style="color:var(--secondary); font-family:var(--font-code); font-size:0.9rem;" data-translate="role_tag">Low-Level, Backend & VR Specialist</span>
                 <p style="margin-top: 15px; color: var(--text-main); font-size: 1rem;" id="about-bio" data-translate="about_bio">
-                    I don't just write code, I engineer systems. From writing a custom <b>OS Bootloader</b> in Assembly to building complex <b>Android Remote Control</b> systems and Game Engines.
+                    I'm 18, my name is Egor. I'm a <b>student</b> who loves learning new things and chatting with people. I build <b>VR projects</b>, <b>Minecraft mods</b>, and low-level systems. I just make cool stuff and grow in what I find interesting :>
                 </p>
                 <a href="https://t.me/ogo_orig" target="_blank" class="btn-tg">
                     <i class="fab fa-telegram-plane"></i> @ogo_orig
@@ -565,7 +567,7 @@
             </div>
             <div style="width:1px; height:50px; background:rgba(255,255,255,0.1);"></div>
             <div>
-                <div class="s-val">5+</div>
+                <div class="s-val">9+</div>
                 <div class="s-lbl" data-translate="stat_proj">REPOSITORIES</div>
             </div>
         </div>
@@ -617,6 +619,12 @@
                 <span class="chip-name">TypeScript</span><span class="status-dot st-active" data-translate="s_active">Active</span>
             </a>
 
+            <a href="#" target="_blank" class="chip s-tech">
+                <span class="chip-name">VR Development</span><span class="status-dot st-active" data-translate="s_active">Active</span>
+            </a>
+            <a href="#" target="_blank" class="chip s-tech">
+                <span class="chip-name">Minecraft Modding</span><span class="status-dot st-active" data-translate="s_active">Active</span>
+            </a>
             <a href="https://spring.io/projects/spring-boot" target="_blank" class="chip s-tech">
                 <span class="chip-name">Spring Boot</span><span class="status-dot st-active" data-translate="s_active">Active</span>
             </a>
@@ -640,6 +648,20 @@
     </div>
 
     <div class="section-header">// ENGINEERING_CAPABILITIES</div>
+
+    <div class="capability-card">
+        <span class="tag-private" data-translate="tag_vr_dev">VR / AR / MODDING</span>
+        <div class="cap-header">
+            <i class="fas fa-vr-cardboard cap-icon"></i>
+            <div class="cap-title" data-translate="cap_vr_title">VR Development & Modding</div>
+        </div>
+        <ul class="cap-list" data-translate="cap_vr_list">
+            <li>VR Physics Interaction (Grab/Throw mechanics)</li>
+            <li>Immersive VR UI & HUD development</li>
+            <li>Custom VR Hardware Input Logic</li>
+            <li>Minecraft Fabric Modding & Addons</li>
+        </ul>
+    </div>
 
     <div class="capability-card">
         <span class="tag-private">PRIVATE / CLOSED SOURCE</span>
@@ -682,7 +704,6 @@
             <li>System Trace Cleaning (Registry, Event Logs)</li>
         </ul>
     </div>
-
 
     <div class="capability-card">
         <span class="tag-private">PRIVATE / CLOSED SOURCE</span>
@@ -729,6 +750,45 @@
 
     <div class="section-header" id="projects">// OPEN_SOURCE_REPOSITORIES</div>
 
+    <div class="box project-card">
+        <div class="p-tags">
+            <span class="p-tag tag-vr">VR</span>
+            <span class="p-tag tag-java">Java</span>
+        </div>
+        <div class="p-title">VRWaterSplash</div>
+        <p class="p-desc" data-translate="desc_vr_water">Dynamic water physics and splashing effects optimized for VR environments.</p>
+        <a href="https://github.com/ninix44/VRWaterSplash" target="_blank" class="p-link">VIEW REPO <i class="fas fa-arrow-right"></i></a>
+    </div>
+
+    <div class="box project-card">
+        <div class="p-tags">
+            <span class="p-tag tag-vr">VR</span>
+            <span class="p-tag tag-java">Java</span>
+        </div>
+        <div class="p-title">VRDrumKit</div>
+        <p class="p-desc" data-translate="desc_vr_drum">Virtual reality drum kit engine with low-latency haptic feedback response.</p>
+        <a href="https://github.com/ninix44/VRDrumKit" target="_blank" class="p-link">VIEW REPO <i class="fas fa-arrow-right"></i></a>
+    </div>
+
+    <div class="box project-card">
+        <div class="p-tags">
+            <span class="p-tag tag-vr">VR</span>
+            <span class="p-tag tag-java">Java</span>
+        </div>
+        <div class="p-title">VRPuppetShow</div>
+        <p class="p-desc" data-translate="desc_vr_puppet">Interaction framework for puppet mechanics in VR using IK constraints.</p>
+        <a href="https://github.com/ninix44/VRPuppetShow" target="_blank" class="p-link">VIEW REPO <i class="fas fa-arrow-right"></i></a>
+    </div>
+
+    <div class="box project-card">
+        <div class="p-tags">
+            <span class="p-tag tag-vr">VR</span>
+            <span class="p-tag tag-java">Java</span>
+        </div>
+        <div class="p-title">VRItemTaker</div>
+        <p class="p-desc" data-translate="desc_vr_item">Universal interaction grab-system for picking up items in 3D VR space.</p>
+        <a href="https://github.com/ninix44/VRItemTaker" target="_blank" class="p-link">VIEW REPO <i class="fas fa-arrow-right"></i></a>
+    </div>
 
     <div class="box project-card">
         <div class="p-tags">
@@ -819,10 +879,10 @@
     const translations = {
         en: {
             hero_title: "SYSTEMS<br><span class='gradient-text'>ENGINEER</span>",
-            hero_desc: "// Building high-performance software, game engines, and OS kernels.<br>Main Stack: Rust, C++, Java, Kotlin, Python.",
+            hero_desc: "// Building high-performance software, game engines, and VR systems.<br>Main Stack: Rust, C++, Java, Kotlin, Python, VR.",
             btn_explore: "Explore Code <i class='fas fa-terminal'></i>",
-            role_tag: "Low-Level & Backend Specialist",
-            about_bio: "I'm 18, my name is Egor. I'm a <b>student</b> who loves learning new things and chatting with people. I just make cool stuff and grow in what I find interesting :>",
+            role_tag: "Low-Level, Backend & VR Specialist",
+            about_bio: "I'm 18, my name is Egor. I'm a <b>student</b> who loves learning new things and chatting with people. I build <b>VR projects</b>, <b>Minecraft mods</b>, and low-level systems. I just make cool stuff and grow in what I find interesting :>",
             stat_lang: "LANGUAGES",
             stat_proj: "REPOSITORIES",
             tab_all: "ALL",
@@ -831,6 +891,15 @@
             s_active: "Active",
             s_progress: "In Progress",
             s_learning: "Learning",
+
+            tag_vr_dev: "VR / AR / MODDING",
+            cap_vr_title: "VR Development & Modding",
+            cap_vr_list: `
+                <li>VR Physics Interaction (Grab/Throw mechanics)</li>
+                <li>Immersive VR UI & HUD development</li>
+                <li>Custom VR Hardware Input Logic</li>
+                <li>Minecraft Fabric Modding & Addons</li>
+            `,
 
             cap_sec_title: "Game Security & Low Level",
             cap_sec_list: `
@@ -853,7 +922,6 @@
                 <li>Network Adapter MAC Address Randomization</li>
                 <li>System Trace Cleaning (Registry, Event Logs)</li>
             `,
-
             cap_mob_title: "Mobile System Internals",
             cap_mob_list: `
                 <li>Custom Android Remote Admin (MediaProjection Screen Stream)</li>
@@ -876,6 +944,11 @@
                 <li>3D Spline Pathing & Math Visualization</li>
             `,
 
+            desc_vr_water: "Dynamic water physics and splashing effects optimized for VR environments.",
+            desc_vr_drum: "Virtual reality drum kit engine with low-latency haptic feedback response.",
+            desc_vr_puppet: "Interaction framework for puppet mechanics in VR using IK constraints.",
+            desc_vr_item: "Universal interaction grab-system for picking up items in 3D VR space.",
+
             desc_eclipse: "Advanced Game Client & Launcher system. ASM Bytecode manipulation (Mixins), custom WPF Loader with HWID protection.",
             desc_rat: "Remote Administration Tool for Android. Real-time screen streaming via MediaProjection, input injection, and file management.",
             desc_vision: "Real-time Computer Vision apps. 'Sniper-Face' uses Kalman Filtering for tracking. 'HandReactions' detects gestures using MediaPipe.",
@@ -896,10 +969,10 @@
         },
         ru: {
             hero_title: "СИСТЕМНЫЙ<br><span class='gradient-text'>ИНЖЕНЕР</span>",
-            hero_desc: "// Разработка высокопроизводительного ПО, игровых движков, ядер ОС.<br>Основной стек: Rust, C++, Java, Kotlin, Python.",
+            hero_desc: "// Разработка высокопроизводительного ПО, игровых движков и VR систем.<br>Основной стек: Rust, C++, Java, Kotlin, Python, VR.",
             btn_explore: "Смотреть код <i class='fas fa-terminal'></i>",
-            role_tag: "Специалист по Low-Level и Backend",
-            about_bio: "Мне 18, зовут Егор. Я <b>студент</b>, люблю изучать что-то новое и всегда рад пообщаться. Просто делаю крутые штуки и развиваюсь в том, что мне интересно :>",
+            role_tag: "Специалист по Low-Level, Backend и VR",
+            about_bio: "Мне 18, зовут Егор. Я <b>студент</b>, люблю изучать что-то новое и всегда рад пообщаться. Разрабатываю <b>VR проекты</b>, <b>моды для Minecraft</b> и low-level системы. Просто делаю крутые штуки и развиваюсь в том, что мне интересно :>",
             stat_lang: "ЯЗЫКОВ",
             stat_proj: "РЕПОЗИТОРИЕВ",
             tab_all: "ВСЕ",
@@ -908,6 +981,15 @@
             s_active: "Активно",
             s_progress: "В процессе",
             s_learning: "Изучаю",
+
+            tag_vr_dev: "VR / AR / МОДДИНГ",
+            cap_vr_title: "Разработка VR и Моддинг",
+            cap_vr_list: `
+                <li>VR Физика и взаимодействия (Механики Grab/Throw)</li>
+                <li>Разработка иммерсивных VR UI и HUD</li>
+                <li>Кастомная логика аппаратного ввода VR</li>
+                <li>Моддинг Minecraft Fabric и создание аддонов</li>
+            `,
 
             cap_sec_title: "Игровая Безопасность и Low Level",
             cap_sec_list: `
@@ -930,7 +1012,6 @@
                 <li>Рандомизация MAC-адресов сетевых адаптеров</li>
                 <li>Алгоритмы очистки системных следов (Реестр, Логи)</li>
             `,
-
             cap_mob_title: "Внутреннее устройство Mobile",
             cap_mob_list: `
                 <li>Кастомное удаленное управление Android (MediaProjection Screen Stream)</li>
@@ -952,6 +1033,11 @@
                 <li>Высокопроизводительные симуляции частиц на Rust (3000+)</li>
                 <li>3D Сплайны и математическая визуализация</li>
             `,
+
+            desc_vr_water: "Динамическая физика воды и эффекты всплесков, оптимизированные для VR.",
+            desc_vr_drum: "Движок барабанной установки для виртуальной реальности с минимальной задержкой и тактильной отдачей.",
+            desc_vr_puppet: "Фреймворк взаимодействия для управления марионетками в VR с использованием инверсной кинематики (IK).",
+            desc_vr_item: "Универсальная система взаимодействия для захвата и управления предметами в 3D VR пространстве.",
 
             desc_eclipse: "Сложная экосистема игрового клиента. Манипуляция байт-кодом (Mixins), кастомный WPF Лаунчер с HWID защитой.",
             desc_rat: "Инструмент удаленного администрирования Android. Стриминг экрана в реальном времени, файловый менеджер и инъекция ввода.",
